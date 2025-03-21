@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.cbo.memcloud.core.designsystem-merged_res-40:/drawable/notification_tile_bg.xml",
+        "source": "com.cbo.memcloud.core.designsystem-core-1.12.0-21:/drawable/notification_tile_bg.xml"
+    },
+    {
+        "merged": "com.cbo.memcloud.core.designsystem-merged_res-40:/drawable/notification_icon_background.xml",
+        "source": "com.cbo.memcloud.core.designsystem-core-1.12.0-21:/drawable/notification_icon_background.xml"
+    },
+    {
+        "merged": "com.cbo.memcloud.core.designsystem-merged_res-40:/drawable/notification_bg.xml",
+        "source": "com.cbo.memcloud.core.designsystem-core-1.12.0-21:/drawable/notification_bg.xml"
+    },
+    {
+        "merged": "com.cbo.memcloud.core.designsystem-merged_res-40:/drawable/notification_bg_low.xml",
+        "source": "com.cbo.memcloud.core.designsystem-core-1.12.0-21:/drawable/notification_bg_low.xml"
+    }
+]

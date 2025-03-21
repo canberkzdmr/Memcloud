@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.cbo.memcloud.feature.notes-merged_res-65:/animator/fragment_open_exit.xml",
+        "source": "com.cbo.memcloud.feature.notes-fragment-1.5.1-48:/animator/fragment_open_exit.xml"
+    },
+    {
+        "merged": "com.cbo.memcloud.feature.notes-merged_res-65:/animator/fragment_close_enter.xml",
+        "source": "com.cbo.memcloud.feature.notes-fragment-1.5.1-48:/animator/fragment_close_enter.xml"
+    },
+    {
+        "merged": "com.cbo.memcloud.feature.notes-merged_res-65:/animator/fragment_close_exit.xml",
+        "source": "com.cbo.memcloud.feature.notes-fragment-1.5.1-48:/animator/fragment_close_exit.xml"
+    },
+    {
+        "merged": "com.cbo.memcloud.feature.notes-merged_res-65:/animator/fragment_fade_enter.xml",
+        "source": "com.cbo.memcloud.feature.notes-fragment-1.5.1-48:/animator/fragment_fade_enter.xml"
+    },
+    {
+        "merged": "com.cbo.memcloud.feature.notes-merged_res-65:/animator/fragment_open_enter.xml",
+        "source": "com.cbo.memcloud.feature.notes-fragment-1.5.1-48:/animator/fragment_open_enter.xml"
+    },
+    {
+        "merged": "com.cbo.memcloud.feature.notes-merged_res-65:/animator/fragment_fade_exit.xml",
+        "source": "com.cbo.memcloud.feature.notes-fragment-1.5.1-48:/animator/fragment_fade_exit.xml"
+    }
+]

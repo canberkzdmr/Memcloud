@@ -1,0 +1,11 @@
+com.cbo.memcloud.core.model-lifecycle-runtime-2.3.1-0 C:\Users\pc\.gradle\caches\transforms-3\2d891a27665134aa2eacb95119be1573\transformed\lifecycle-runtime-2.3.1\res
+com.cbo.memcloud.core.model-annotation-experimental-1.3.0-1 C:\Users\pc\.gradle\caches\transforms-3\3d0e6561b8f340d9c008d7155893417c\transformed\annotation-experimental-1.3.0\res
+com.cbo.memcloud.core.model-core-1.12.0-2 C:\Users\pc\.gradle\caches\transforms-3\8e0f372749466ea490747fe481f37040\transformed\core-1.12.0\res
+com.cbo.memcloud.core.model-core-ktx-1.12.0-3 C:\Users\pc\.gradle\caches\transforms-3\a3b4d3eb6231d6c38d252ca1a4267448\transformed\core-ktx-1.12.0\res
+com.cbo.memcloud.core.model-pngs-4 C:\Users\pc\AndroidStudioProjects\Memcloud\core\model\build\generated\res\pngs\release
+com.cbo.memcloud.core.model-resValues-5 C:\Users\pc\AndroidStudioProjects\Memcloud\core\model\build\generated\res\resValues\release
+com.cbo.memcloud.core.model-mergeReleaseResources-6 C:\Users\pc\AndroidStudioProjects\Memcloud\core\model\build\intermediates\incremental\release\mergeReleaseResources\merged.dir
+com.cbo.memcloud.core.model-mergeReleaseResources-7 C:\Users\pc\AndroidStudioProjects\Memcloud\core\model\build\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+com.cbo.memcloud.core.model-merged_res-8 C:\Users\pc\AndroidStudioProjects\Memcloud\core\model\build\intermediates\merged_res\release
+com.cbo.memcloud.core.model-main-9 C:\Users\pc\AndroidStudioProjects\Memcloud\core\model\src\main\res
+com.cbo.memcloud.core.model-release-10 C:\Users\pc\AndroidStudioProjects\Memcloud\core\model\src\release\res

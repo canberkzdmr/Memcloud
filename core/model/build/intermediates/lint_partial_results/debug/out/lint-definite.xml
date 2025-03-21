@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.2.2" type="incidents">
+
+    <incident
+        id="OldTargetApi"
+        severity="warning"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details.">
+        <fix-replace
+            description="Update targetSdkVersion to 35"
+            oldString="34"
+            replacement="35"/>
+        <location
+            file="${:core:model*projectDir}/build.gradle"
+            line="12"
+            column="9"
+            startOffset="210"
+            endLine="12"
+            endColumn="21"
+            endOffset="222"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core-ktx than 1.12.0 is available: 1.15.0">
+        <fix-replace
+            description="Change to 1.15.0"
+            family="Update versions"
+            oldString="1.12.0"
+            replacement="1.15.0"/>
+        <location
+            file="${:core:model*projectDir}/build.gradle"
+            line="34"
+            column="20"
+            startOffset="784"
+            endLine="34"
+            endColumn="51"
+            endOffset="815"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.2.1">
+        <fix-replace
+            description="Change to 1.2.1"
+            family="Update versions"
+            oldString="1.1.5"
+            replacement="1.2.1"/>
+        <location
+            file="${:core:model*projectDir}/build.gradle"
+            line="38"
+            column="31"
+            startOffset="975"
+            endLine="38"
+            endColumn="62"
+            endOffset="1006"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.6.1">
+        <fix-replace
+            description="Change to 3.6.1"
+            family="Update versions"
+            oldString="3.5.1"
+            replacement="3.6.1"/>
+        <location
+            file="${:core:model*projectDir}/build.gradle"
+            line="39"
+            column="31"
+            startOffset="1038"
+            endLine="39"
+            endColumn="75"
+            endOffset="1082"/>
+    </incident>
+
+</incidents>

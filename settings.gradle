@@ -1,0 +1,33 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven { url = uri("https://repo.gradle.org/gradle/libs-releases") }
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+    }
+}
+
+rootProject.name = "Memcloud"
+include ':app'
+include ':core:common'
+include ':core:data'
+include ':core:database'
+include ':core:network'
+include ':core:model'
+include ':core:ui'
+include ':core:designsystem'
+include ':feature:auth'
+include ':feature:notes'
+include ':feature:editor'
+include ':feature:settings'
+include ':feature:sync'
