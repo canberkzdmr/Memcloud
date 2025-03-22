@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CircularProgressIndicator
@@ -85,6 +86,17 @@ fun NoteEditorScreen(
                     }
                 },
                 actions = {
+                    IconButton(
+                        onClick = { 
+                            viewModel.saveNote() 
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Save,
+                            contentDescription = "Save Note"
+                        )
+                    }
+                    
                     if (noteId != null) {
                         IconButton(
                             onClick = { 
