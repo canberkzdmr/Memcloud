@@ -88,7 +88,8 @@ fun NoteEditorScreen(
                 actions = {
                     IconButton(
                         onClick = { 
-                            viewModel.saveNote() 
+                            viewModel.saveNote()
+                            onNavigateBack()
                         }
                     ) {
                         Icon(
