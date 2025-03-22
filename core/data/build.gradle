@@ -1,7 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.devtools.ksp'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -32,23 +33,26 @@ android {
 }
 
 dependencies {
-    implementation project(":core:model")
     implementation project(":core:common")
     implementation project(":core:database")
+    implementation project(":core:model")
     implementation project(":core:network")
 
     implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2'
-    
-    // DataStore
-    implementation 'androidx.datastore:datastore-preferences:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     
     // Dagger Hilt
     implementation 'com.google.dagger:hilt-android:2.50'
-    ksp 'com.google.dagger:hilt-android-compiler:2.50'
+    kapt 'com.google.dagger:hilt-android-compiler:2.50'
     
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    
+    // Testing
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:5.2.1'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
+    
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 } 

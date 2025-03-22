@@ -66,6 +66,22 @@
     <issue
         id="GradleDependency"
         severity="Warning"
+        message="A newer version of androidx.compose.material:material-icons-extended than 1.7.7 is available: 1.7.8"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Gradle Dependency"
+        explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="    implementation &apos;androidx.compose.material:material-icons-extended:1.7.7&apos;"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="C:\Users\pc\AndroidStudioProjects\Memcloud\feature\notes\build.gradle"
+            line="57"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        severity="Warning"
         message="A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.7.0 is available: 2.8.7"
         category="Correctness"
         priority="4"
@@ -75,7 +91,7 @@
         errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="C:\Users\pc\AndroidStudioProjects\Memcloud\feature\notes\build.gradle"
-            line="57"
+            line="58"
             column="20"/>
     </issue>
 
@@ -91,7 +107,7 @@
         errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="C:\Users\pc\AndroidStudioProjects\Memcloud\feature\notes\build.gradle"
-            line="58"
+            line="59"
             column="20"/>
     </issue>
 
@@ -107,7 +123,7 @@
         errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="C:\Users\pc\AndroidStudioProjects\Memcloud\feature\notes\build.gradle"
-            line="59"
+            line="60"
             column="20"/>
     </issue>
 
@@ -123,7 +139,7 @@
         errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="C:\Users\pc\AndroidStudioProjects\Memcloud\feature\notes\build.gradle"
-            line="63"
+            line="64"
             column="20"/>
     </issue>
 
@@ -139,7 +155,7 @@
         errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="C:\Users\pc\AndroidStudioProjects\Memcloud\feature\notes\build.gradle"
-            line="68"
+            line="69"
             column="31"/>
     </issue>
 
@@ -155,7 +171,7 @@
         errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="C:\Users\pc\AndroidStudioProjects\Memcloud\feature\notes\build.gradle"
-            line="69"
+            line="70"
             column="31"/>
     </issue>
 
@@ -171,7 +187,7 @@
         errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="C:\Users\pc\AndroidStudioProjects\Memcloud\feature\notes\build.gradle"
-            line="70"
+            line="71"
             column="40"/>
     </issue>
 
