@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,10 +17,15 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.outlined.Notes
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -34,17 +40,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.offset
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cbo.memcloud.feature.notes.components.NoteCard
+import com.cbo.memcloud.feature.notes.SortOption
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -150,6 +163,160 @@ fun NotesScreen(
                             }
                         },
                         actions = {
+                            var showSortMenu by remember { mutableStateOf(false) }
+                            
+                            Box {
+                                IconButton(onClick = { showSortMenu = true }) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = Icons.Default.Sort,
+                                            contentDescription = "Sort",
+                                        )
+                                        
+                                        val arrowIcon = when {
+                                            notesUiState.sortOption == SortOption.UPDATED_ASC || 
+                                            notesUiState.sortOption == SortOption.CREATED_ASC || 
+                                            notesUiState.sortOption == SortOption.TITLE_ASC -> Icons.Default.ArrowUpward
+                                            else -> Icons.Default.ArrowDownward
+                                        }
+                                        
+                                        Icon(
+                                            imageVector = arrowIcon,
+                                            contentDescription = "Sort Direction",
+                                            modifier = Modifier
+                                                .size(12.dp)
+                                                .align(Alignment.BottomEnd)
+                                                .offset(x = (-2).dp, y = (-2).dp)
+                                        )
+                                    }
+                                }
+                                
+                                DropdownMenu(
+                                    expanded = showSortMenu,
+                                    onDismissRequest = { showSortMenu = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { 
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                Text("Last updated")
+                                                if (notesUiState.sortOption == SortOption.UPDATED_DESC) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.ArrowDownward,
+                                                        contentDescription = "Descending",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                } else if (notesUiState.sortOption == SortOption.UPDATED_ASC) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.ArrowUpward,
+                                                        contentDescription = "Ascending",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        onClick = {
+                                            viewModel.setSortOption(
+                                                if (notesUiState.sortOption == SortOption.UPDATED_DESC) 
+                                                    SortOption.UPDATED_ASC 
+                                                else 
+                                                    SortOption.UPDATED_DESC
+                                            )
+                                            showSortMenu = false
+                                        },
+                                        colors = MenuDefaults.itemColors(
+                                            textColor = if (notesUiState.sortOption == SortOption.UPDATED_DESC || 
+                                                      notesUiState.sortOption == SortOption.UPDATED_ASC)
+                                                MaterialTheme.colorScheme.primary
+                                            else
+                                                MaterialTheme.colorScheme.onSurface
+                                        )
+                                    )
+                                    
+                                    DropdownMenuItem(
+                                        text = { 
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                Text("Creation date")
+                                                if (notesUiState.sortOption == SortOption.CREATED_DESC) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.ArrowDownward,
+                                                        contentDescription = "Descending",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                } else if (notesUiState.sortOption == SortOption.CREATED_ASC) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.ArrowUpward,
+                                                        contentDescription = "Ascending",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        onClick = {
+                                            viewModel.setSortOption(
+                                                if (notesUiState.sortOption == SortOption.CREATED_DESC) 
+                                                    SortOption.CREATED_ASC 
+                                                else 
+                                                    SortOption.CREATED_DESC
+                                            )
+                                            showSortMenu = false
+                                        },
+                                        colors = MenuDefaults.itemColors(
+                                            textColor = if (notesUiState.sortOption == SortOption.CREATED_DESC || 
+                                                      notesUiState.sortOption == SortOption.CREATED_ASC)
+                                                MaterialTheme.colorScheme.primary
+                                            else
+                                                MaterialTheme.colorScheme.onSurface
+                                        )
+                                    )
+                                    
+                                    DropdownMenuItem(
+                                        text = { 
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                Text("Title")
+                                                if (notesUiState.sortOption == SortOption.TITLE_DESC) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.ArrowDownward,
+                                                        contentDescription = "Z to A",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                } else if (notesUiState.sortOption == SortOption.TITLE_ASC) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.ArrowUpward,
+                                                        contentDescription = "A to Z",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        onClick = {
+                                            viewModel.setSortOption(
+                                                if (notesUiState.sortOption == SortOption.TITLE_ASC) 
+                                                    SortOption.TITLE_DESC 
+                                                else 
+                                                    SortOption.TITLE_ASC
+                                            )
+                                            showSortMenu = false
+                                        },
+                                        colors = MenuDefaults.itemColors(
+                                            textColor = if (notesUiState.sortOption == SortOption.TITLE_DESC || 
+                                                      notesUiState.sortOption == SortOption.TITLE_ASC)
+                                                MaterialTheme.colorScheme.primary
+                                            else
+                                                MaterialTheme.colorScheme.onSurface
+                                        )
+                                    )
+                                }
+                            }
+                            
                             IconButton(onClick = { viewModel.setSearchActive(true) }) {
                                 Icon(
                                     imageVector = Icons.Default.Search,

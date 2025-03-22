@@ -206,6 +206,6 @@ fun NoteCard(
 private fun formatDateTime(timestamp: Long): String {
     val instant = Instant.ofEpochMilli(timestamp)
     val dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-    val formatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
+    val formatter = DateTimeFormatter.ofPattern("MMM d, yyyy HH:mm")
     return dateTime.format(formatter)
 } 

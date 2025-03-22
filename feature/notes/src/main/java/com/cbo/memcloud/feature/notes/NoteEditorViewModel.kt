@@ -72,21 +72,18 @@ class NoteEditorViewModel @Inject constructor(
             
             val now = Instant.now().toEpochMilli()
             
-            val updatedNote = if (currentNote != null) {
-                currentNote.copy(
-                    title = currentState.title,
-                    content = currentState.content,
-                    updatedAt = now
-                )
-            } else {
-                Note(
+            val updatedNote = currentNote?.copy(
+                title = currentState.title,
+                content = currentState.content,
+                updatedAt = now
+            )
+                ?: Note(
                     id = UUID.randomUUID().toString(),
                     title = currentState.title,
                     content = currentState.content,
                     createdAt = now,
                     updatedAt = now
                 )
-            }
             
             try {
                 notesRepository.saveNote(updatedNote)
