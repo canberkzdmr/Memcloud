@@ -59,3 +59,10 @@ out/
 
 # Distribution directory
 dist/
+/feature/notes/build
+
+# Explicitly ignore all build files in transformations
+feature/notes/build/**
+feature/notes/build/.transforms/**
+**/build/
+**/.transforms/
