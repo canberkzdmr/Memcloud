@@ -1,0 +1,10 @@
+# Build files
+build/
+
+# Generated files
+bin/
+gen/
+out/
+
+# Log files
+*.log 

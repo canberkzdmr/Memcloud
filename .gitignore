@@ -42,3 +42,20 @@ google-services.json
 
 # Kotlin
 .kotlin/
+
+# Compiled class file
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+
+# Gradle wrapper
+!gradle/wrapper/gradle-wrapper.jar
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Distribution directory
+dist/
