@@ -7,4 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="british_racing_green">#FF004225</color>
+    <color name="british_racing_green_light">#FF2B6B4D</color>
+    <color name="british_racing_green_dark">#FF00321B</color>
 </resources>

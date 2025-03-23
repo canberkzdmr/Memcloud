@@ -3,7 +3,9 @@ package com.cbo.memcloud.feature.notes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cbo.memcloud.core.data.repository.NotesRepository
+import com.cbo.memcloud.core.data.repository.NotebooksRepository
 import com.cbo.memcloud.core.model.Note
+import com.cbo.memcloud.core.model.Notebook
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,17 +20,24 @@ data class NoteEditorUiState(
     val note: Note? = null,
     val title: String = "",
     val content: String = "",
+    val notebookId: String = "default",
+    val notebooks: List<Notebook> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )
 
 @HiltViewModel
 class NoteEditorViewModel @Inject constructor(
-    private val notesRepository: NotesRepository
+    private val notesRepository: NotesRepository,
+    private val notebooksRepository: NotebooksRepository
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(NoteEditorUiState())
     val uiState: StateFlow<NoteEditorUiState> = _uiState.asStateFlow()
+    
+    init {
+        loadNotebooks()
+    }
     
     fun loadNote(id: String) {
         viewModelScope.launch {
@@ -36,19 +45,44 @@ class NoteEditorViewModel @Inject constructor(
             try {
                 val note = notesRepository.getNoteById(id)
                 if (note != null) {
-                    _uiState.update { state ->
-                        state.copy(
+                    _uiState.update {
+                        it.copy(
                             note = note,
                             title = note.title,
                             content = note.content,
+                            notebookId = note.notebookId,
                             isLoading = false
                         )
                     }
                 } else {
-                    _uiState.update { it.copy(isLoading = false) }
+                    _uiState.update {
+                        it.copy(
+                            error = "Note not found",
+                            isLoading = false
+                        )
+                    }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message, isLoading = false) }
+                _uiState.update {
+                    it.copy(
+                        error = e.message ?: "Error loading note",
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+    
+    private fun loadNotebooks() {
+        viewModelScope.launch {
+            notebooksRepository.getAllNotebooks().collect { notebooks ->
+                _uiState.update { it.copy(notebooks = notebooks) }
+                
+                // If no notebook is selected, set the default one
+                if (uiState.value.notebookId.isBlank()) {
+                    val defaultNotebook = notebooksRepository.getDefaultNotebook()
+                    _uiState.update { it.copy(notebookId = defaultNotebook.id) }
+                }
             }
         }
     }
@@ -61,34 +95,40 @@ class NoteEditorViewModel @Inject constructor(
         _uiState.update { it.copy(content = content) }
     }
     
+    fun updateNotebookId(notebookId: String) {
+        _uiState.update { it.copy(notebookId = notebookId) }
+    }
+    
     fun saveNote() {
         viewModelScope.launch {
-            val currentState = _uiState.value
-            val currentNote = currentState.note
-            
-            if (currentState.title.isBlank() && currentState.content.isBlank()) {
-                return@launch // Don't save empty notes
-            }
-            
-            val now = Instant.now().toEpochMilli()
-            
-            val updatedNote = currentNote?.copy(
-                title = currentState.title,
-                content = currentState.content,
-                updatedAt = now
-            )
-                ?: Note(
-                    id = UUID.randomUUID().toString(),
-                    title = currentState.title,
-                    content = currentState.content,
-                    createdAt = now,
-                    updatedAt = now
-                )
-            
             try {
+                val currentState = _uiState.value
+                val currentNote = currentState.note
+                
+                val updatedNote = if (currentNote != null) {
+                    currentNote.copy(
+                        title = currentState.title,
+                        content = currentState.content,
+                        notebookId = currentState.notebookId,
+                        updatedAt = Instant.now().toEpochMilli()
+                    )
+                } else {
+                    Note(
+                        id = UUID.randomUUID().toString(),
+                        title = currentState.title,
+                        content = currentState.content,
+                        createdAt = Instant.now().toEpochMilli(),
+                        updatedAt = Instant.now().toEpochMilli(),
+                        notebookId = currentState.notebookId
+                    )
+                }
+                
                 notesRepository.saveNote(updatedNote)
+                _uiState.update { it.copy(note = updatedNote) }
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message) }
+                _uiState.update {
+                    it.copy(error = e.message ?: "Error saving note")
+                }
             }
         }
     }
@@ -96,15 +136,9 @@ class NoteEditorViewModel @Inject constructor(
     fun toggleFavorite() {
         viewModelScope.launch {
             val currentNote = _uiState.value.note ?: return@launch
-            val isFavorite = currentNote.isFavorite
-            
-            try {
-                notesRepository.toggleNoteFavorite(currentNote.id, !isFavorite)
-                _uiState.update { 
-                    it.copy(note = it.note?.copy(isFavorite = !isFavorite))
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message) }
+            notesRepository.toggleNoteFavorite(currentNote.id, !currentNote.isFavorite)
+            _uiState.update {
+                it.copy(note = it.note?.copy(isFavorite = !currentNote.isFavorite))
             }
         }
     }
@@ -112,14 +146,9 @@ class NoteEditorViewModel @Inject constructor(
     fun archiveNote() {
         viewModelScope.launch {
             val currentNote = _uiState.value.note ?: return@launch
-            
-            try {
-                notesRepository.archiveNote(currentNote.id)
-                _uiState.update { 
-                    it.copy(note = it.note?.copy(isArchived = true))
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message) }
+            notesRepository.archiveNote(currentNote.id)
+            _uiState.update {
+                it.copy(note = it.note?.copy(isArchived = true))
             }
         }
     }
@@ -127,14 +156,9 @@ class NoteEditorViewModel @Inject constructor(
     fun unarchiveNote() {
         viewModelScope.launch {
             val currentNote = _uiState.value.note ?: return@launch
-            
-            try {
-                notesRepository.unarchiveNote(currentNote.id)
-                _uiState.update { 
-                    it.copy(note = it.note?.copy(isArchived = false))
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message) }
+            notesRepository.unarchiveNote(currentNote.id)
+            _uiState.update {
+                it.copy(note = it.note?.copy(isArchived = false))
             }
         }
     }
@@ -142,14 +166,9 @@ class NoteEditorViewModel @Inject constructor(
     fun moveToTrash() {
         viewModelScope.launch {
             val currentNote = _uiState.value.note ?: return@launch
-            
-            try {
-                notesRepository.moveNoteToTrash(currentNote.id)
-                _uiState.update { 
-                    it.copy(note = it.note?.copy(isDeleted = true))
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message) }
+            notesRepository.moveNoteToTrash(currentNote.id)
+            _uiState.update {
+                it.copy(note = it.note?.copy(isDeleted = true))
             }
         }
     }
@@ -157,15 +176,7 @@ class NoteEditorViewModel @Inject constructor(
     fun deleteNotePermanently() {
         viewModelScope.launch {
             val currentNote = _uiState.value.note ?: return@launch
-            
-            try {
-                notesRepository.deleteNotePermanently(currentNote.id)
-                _uiState.update { 
-                    it.copy(note = null)
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message) }
-            }
+            notesRepository.deleteNotePermanently(currentNote.id)
         }
     }
 } 

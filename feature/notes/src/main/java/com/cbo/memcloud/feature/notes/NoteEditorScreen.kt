@@ -2,12 +2,19 @@ package com.cbo.memcloud.feature.notes
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
@@ -17,9 +24,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -51,11 +61,13 @@ import java.time.format.FormatStyle
 fun NoteEditorScreen(
     noteId: String?,
     onNavigateBack: () -> Unit,
+    onNavigateToNotebooks: () -> Unit,
     viewModel: NoteEditorViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val uiState by viewModel.uiState.collectAsState()
     var showMenu by remember { mutableStateOf(false) }
+    var showNotebookMenu by remember { mutableStateOf(false) }
     
     LaunchedEffect(noteId) {
         if (noteId != null) {
@@ -86,12 +98,7 @@ fun NoteEditorScreen(
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = { 
-                            viewModel.saveNote()
-                            onNavigateBack()
-                        }
-                    ) {
+                    IconButton(onClick = { viewModel.saveNote() }) {
                         Icon(
                             imageVector = Icons.Default.Save,
                             contentDescription = "Save Note"
@@ -99,15 +106,11 @@ fun NoteEditorScreen(
                     }
                     
                     if (noteId != null) {
-                        IconButton(
-                            onClick = { 
-                                viewModel.toggleFavorite() 
-                            }
-                        ) {
+                        IconButton(onClick = { viewModel.toggleFavorite() }) {
                             Icon(
-                                imageVector = if (uiState.note?.isFavorite == true) 
+                                imageVector = if (uiState.note?.isFavorite == true)
                                     Icons.Filled.Star else Icons.Outlined.Star,
-                                contentDescription = if (uiState.note?.isFavorite == true) 
+                                contentDescription = if (uiState.note?.isFavorite == true)
                                     "Remove from Favorites" else "Add to Favorites"
                             )
                         }
@@ -150,7 +153,7 @@ fun NoteEditorScreen(
                             
                             if (uiState.note?.isDeleted == true) {
                                 DropdownMenuItem(
-                                    text = { Text("Delete permanently") },
+                                    text = { Text("Delete Permanently") },
                                     onClick = {
                                         viewModel.deleteNotePermanently()
                                         showMenu = false
@@ -165,7 +168,7 @@ fun NoteEditorScreen(
                                 )
                             } else {
                                 DropdownMenuItem(
-                                    text = { Text("Move to trash") },
+                                    text = { Text("Move to Trash") },
                                     onClick = {
                                         viewModel.moveToTrash()
                                         showMenu = false
@@ -179,12 +182,27 @@ fun NoteEditorScreen(
                                     }
                                 )
                             }
+
+                            DropdownMenuItem(
+                                text = { Text("Manage Notebooks") },
+                                onClick = {
+                                    showMenu = false
+                                    viewModel.saveNote()
+                                    onNavigateToNotebooks()
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Book,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
                         }
                     }
                 },
                 scrollBehavior = scrollBehavior
             )
-        }
+        },
     ) { paddingValues ->
         if (uiState.isLoading) {
             Box(
@@ -216,6 +234,86 @@ fun NoteEditorScreen(
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
+                
+                // Notebook selector
+                ExposedDropdownMenuBox(
+                    expanded = showNotebookMenu,
+                    onExpandedChange = { showNotebookMenu = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Book,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        
+                        Spacer(modifier = Modifier.width(8.dp))
+                        
+                        Text(
+                            text = "Notebook:",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        
+                        Spacer(modifier = Modifier.width(8.dp))
+                        
+                        Text(
+                            text = uiState.notebooks.find { it.id == uiState.notebookId }?.name ?: "Default",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        
+                        Spacer(modifier = Modifier.weight(1f))
+                        
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Select Notebook"
+                        )
+                    }
+                    
+                    ExposedDropdownMenu(
+                        expanded = showNotebookMenu,
+                        onDismissRequest = { showNotebookMenu = false }
+                    ) {
+                        uiState.notebooks.forEach { notebook ->
+                            DropdownMenuItem(
+                                text = { Text(notebook.name) },
+                                onClick = {
+                                    viewModel.updateNotebookId(notebook.id)
+                                    showNotebookMenu = false
+                                },
+                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                            )
+                        }
+                        
+                        DropdownMenuItem(
+                            text = { 
+                                Text(
+                                    "Manage Notebooks...",
+                                    color = MaterialTheme.colorScheme.primary
+                                ) 
+                            },
+                            onClick = {
+                                showNotebookMenu = false
+                                viewModel.saveNote()
+                                onNavigateToNotebooks()
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(8.dp))
                 
                 TextField(
                     value = uiState.content,

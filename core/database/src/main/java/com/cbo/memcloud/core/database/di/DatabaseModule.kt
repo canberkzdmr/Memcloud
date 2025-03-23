@@ -3,6 +3,7 @@ package com.cbo.memcloud.core.database.di
 import android.content.Context
 import com.cbo.memcloud.core.database.MemcloudDatabase
 import com.cbo.memcloud.core.database.dao.NoteDao
+import com.cbo.memcloud.core.database.dao.NotebookDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,5 +24,10 @@ object DatabaseModule {
     @Provides
     fun provideNoteDao(database: MemcloudDatabase): NoteDao {
         return database.noteDao()
+    }
+    
+    @Provides
+    fun provideNotebookDao(database: MemcloudDatabase): NotebookDao {
+        return database.notebookDao()
     }
 } 

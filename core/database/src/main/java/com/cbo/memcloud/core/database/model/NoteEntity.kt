@@ -17,7 +17,8 @@ data class NoteEntity(
     val tags: String, // Stored as comma-separated values
     val isFavorite: Boolean,
     val isArchived: Boolean,
-    val isDeleted: Boolean
+    val isDeleted: Boolean,
+    val notebookId: String
 ) {
     companion object {
         fun fromNote(note: Note): NoteEntity = NoteEntity(
@@ -30,7 +31,8 @@ data class NoteEntity(
             tags = note.tags.joinToString(","),
             isFavorite = note.isFavorite,
             isArchived = note.isArchived,
-            isDeleted = note.isDeleted
+            isDeleted = note.isDeleted,
+            notebookId = note.notebookId
         )
     }
 
@@ -44,6 +46,7 @@ data class NoteEntity(
         tags = if (tags.isBlank()) emptyList() else tags.split(","),
         isFavorite = isFavorite,
         isArchived = isArchived,
-        isDeleted = isDeleted
+        isDeleted = isDeleted,
+        notebookId = notebookId
     )
 } 

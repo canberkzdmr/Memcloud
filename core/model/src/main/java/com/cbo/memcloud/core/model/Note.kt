@@ -14,7 +14,8 @@ data class Note(
     val tags: List<String> = emptyList(),
     val isFavorite: Boolean = false,
     val isArchived: Boolean = false,
-    val isDeleted: Boolean = false
+    val isDeleted: Boolean = false,
+    val notebookId: String = "default"
 ) {
     companion object {
         fun createEmpty(): Note = Note(

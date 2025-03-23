@@ -3,6 +3,7 @@ package com.cbo.memcloud.feature.notes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cbo.memcloud.core.data.repository.NotesRepository
+import com.cbo.memcloud.core.data.repository.NotebooksRepository
 import com.cbo.memcloud.core.model.Note
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesViewModel @Inject constructor(
-    private val notesRepository: NotesRepository
+    private val notesRepository: NotesRepository,
+    private val notebooksRepository: NotebooksRepository
 ) : ViewModel() {
 
     private val _viewState = MutableStateFlow(NotesViewState())
@@ -26,13 +28,15 @@ class NotesViewModel @Inject constructor(
     private val _isSearchActive = MutableStateFlow(false)
     private val _notesViewType = MutableStateFlow(NotesViewType.ALL)
     private val _sortOption = MutableStateFlow(SortOption.UPDATED_DESC)
+    private val _selectedNotebookId = MutableStateFlow<String?>(null)
 
     val notesUiState = combine(
         _notesViewType,
         _searchQuery,
         _isSearchActive,
-        _sortOption
-    ) { viewType, searchQuery, isSearchActive, sortOption ->
+        _sortOption,
+        _selectedNotebookId
+    ) { viewType, searchQuery, isSearchActive, sortOption, selectedNotebookId ->
         val notesFlow = when {
             isSearchActive && searchQuery.isNotEmpty() -> notesRepository.searchNotes(searchQuery)
             viewType == NotesViewType.FAVORITES -> notesRepository.getFavoriteNotes()
@@ -42,13 +46,21 @@ class NotesViewModel @Inject constructor(
         }
         
         val notes = notesFlow.map { notesList ->
+            // Filter by notebook if applicable
+            val filteredNotes = if (selectedNotebookId != null && viewType == NotesViewType.ALL) {
+                notesList.filter { it.notebookId == selectedNotebookId }
+            } else {
+                notesList
+            }
+            
+            // Apply sorting
             when (sortOption) {
-                SortOption.UPDATED_DESC -> notesList.sortedByDescending { it.updatedAt }
-                SortOption.UPDATED_ASC -> notesList.sortedBy { it.updatedAt }
-                SortOption.CREATED_DESC -> notesList.sortedByDescending { it.createdAt }
-                SortOption.CREATED_ASC -> notesList.sortedBy { it.createdAt }
-                SortOption.TITLE_ASC -> notesList.sortedBy { it.title.lowercase() }
-                SortOption.TITLE_DESC -> notesList.sortedByDescending { it.title.lowercase() }
+                SortOption.UPDATED_DESC -> filteredNotes.sortedByDescending { it.updatedAt }
+                SortOption.UPDATED_ASC -> filteredNotes.sortedBy { it.updatedAt }
+                SortOption.CREATED_DESC -> filteredNotes.sortedByDescending { it.createdAt }
+                SortOption.CREATED_ASC -> filteredNotes.sortedBy { it.createdAt }
+                SortOption.TITLE_ASC -> filteredNotes.sortedBy { it.title.lowercase() }
+                SortOption.TITLE_DESC -> filteredNotes.sortedByDescending { it.title.lowercase() }
             }
         }.stateIn(
             scope = viewModelScope,
@@ -61,7 +73,8 @@ class NotesViewModel @Inject constructor(
             searchQuery = searchQuery,
             isSearchActive = isSearchActive,
             viewType = viewType,
-            sortOption = sortOption
+            sortOption = sortOption,
+            selectedNotebookId = selectedNotebookId
         )
     }.stateIn(
         scope = viewModelScope,
@@ -86,6 +99,10 @@ class NotesViewModel @Inject constructor(
 
     fun setSortOption(sortOption: SortOption) {
         _sortOption.value = sortOption
+    }
+
+    fun setSelectedNotebook(notebookId: String?) {
+        _selectedNotebookId.value = notebookId
     }
 
     fun toggleNoteFavorite(noteId: String, isFavorite: Boolean) {
@@ -135,7 +152,8 @@ data class NotesUiState(
     val searchQuery: String = "",
     val isSearchActive: Boolean = false,
     val viewType: NotesViewType = NotesViewType.ALL,
-    val sortOption: SortOption = SortOption.UPDATED_DESC
+    val sortOption: SortOption = SortOption.UPDATED_DESC,
+    val selectedNotebookId: String? = null
 )
 
 enum class NotesViewType {
