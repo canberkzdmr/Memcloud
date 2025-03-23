@@ -1,16 +1,16 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest2749615407444621826.xml:2:13-83
-INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest2749615407444621826.xml:2:13-83
+ADDED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest5584580377660662848.xml:2:13-83
+INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest5584580377660662848.xml:2:13-83
 	package
-		INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest2749615407444621826.xml
+		INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest5584580377660662848.xml
 	xmlns:android
-		ADDED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest2749615407444621826.xml:2:23-81
+		ADDED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest5584580377660662848.xml:2:23-81
 uses-sdk
-INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest2749615407444621826.xml reason: use-sdk injection requested
-INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest2749615407444621826.xml
-INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest2749615407444621826.xml
+INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest5584580377660662848.xml reason: use-sdk injection requested
+INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest5584580377660662848.xml
+INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest5584580377660662848.xml
 	android:targetSdkVersion
-		INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest2749615407444621826.xml
+		INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest5584580377660662848.xml
 	android:minSdkVersion
-		INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest2749615407444621826.xml
+		INJECTED from C:\Users\pc\AndroidStudioProjects\Memcloud\core\database\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest5584580377660662848.xml
