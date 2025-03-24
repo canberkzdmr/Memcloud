@@ -1,5 +1,6 @@
 package com.cbo.memcloud.feature.notes
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,12 +65,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.cbo.memcloud.core.model.Note
-import com.cbo.memcloud.feature.notes.components.NoteCard
+import com.cbo.memcloud.core.logger.MemLogger
 import com.cbo.memcloud.feature.notes.SortOption
+import com.cbo.memcloud.feature.notes.components.NoteCard
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,6 +77,7 @@ fun NotesScreen(
     onNavigateToNotebooks: () -> Unit,
     viewModel: NotesViewModel = hiltViewModel(),
 ) {
+    MemLogger.i("note screen init")
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val viewState by viewModel.viewState.collectAsState()
     val notesUiState by viewModel.notesUiState.collectAsState()
@@ -171,21 +171,21 @@ fun NotesScreen(
                                 IconButton(onClick = { scope.launch { drawerState.close() } }) {
                                     Icon(
                                         imageVector = Icons.Default.ArrowBack,
-                                        contentDescription = "Close drawer"
+                                        contentDescription = "Close drawer",
                                     )
                                 }
                             } else {
                                 IconButton(onClick = { scope.launch { drawerState.open() } }) {
                                     Icon(
                                         imageVector = Icons.Default.Menu,
-                                        contentDescription = "Open drawer"
+                                        contentDescription = "Open drawer",
                                     )
                                 }
                             }
                         },
                         actions = {
                             var showSortMenu by remember { mutableStateOf(false) }
-                            
+
                             Box {
                                 IconButton(onClick = { showSortMenu = true }) {
                                     Box(contentAlignment = Alignment.Center) {
@@ -193,151 +193,168 @@ fun NotesScreen(
                                             imageVector = Icons.Default.Sort,
                                             contentDescription = "Sort",
                                         )
-                                        
-                                        val arrowIcon = when {
-                                            notesUiState.sortOption == SortOption.UPDATED_ASC || 
-                                            notesUiState.sortOption == SortOption.CREATED_ASC || 
-                                            notesUiState.sortOption == SortOption.TITLE_ASC -> Icons.Default.ArrowUpward
-                                            else -> Icons.Default.ArrowDownward
-                                        }
-                                        
+
+                                        val arrowIcon =
+                                            when {
+                                                notesUiState.sortOption == SortOption.UPDATED_ASC ||
+                                                    notesUiState.sortOption == SortOption.CREATED_ASC ||
+                                                    notesUiState.sortOption == SortOption.TITLE_ASC -> Icons.Default.ArrowUpward
+                                                else -> Icons.Default.ArrowDownward
+                                            }
+
                                         Icon(
                                             imageVector = arrowIcon,
                                             contentDescription = "Sort Direction",
-                                            modifier = Modifier
-                                                .size(12.dp)
-                                                .align(Alignment.BottomEnd)
-                                                .offset(x = (-2).dp, y = (-2).dp)
+                                            modifier =
+                                                Modifier
+                                                    .size(12.dp)
+                                                    .align(Alignment.BottomEnd)
+                                                    .offset(x = (-2).dp, y = (-2).dp),
                                         )
                                     }
                                 }
-                                
+
                                 DropdownMenu(
                                     expanded = showSortMenu,
-                                    onDismissRequest = { showSortMenu = false }
+                                    onDismissRequest = { showSortMenu = false },
                                 ) {
                                     DropdownMenuItem(
-                                        text = { 
+                                        text = {
                                             Row(
                                                 verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                                             ) {
                                                 Text("Last updated")
                                                 if (notesUiState.sortOption == SortOption.UPDATED_DESC) {
                                                     Icon(
                                                         imageVector = Icons.Default.ArrowDownward,
                                                         contentDescription = "Descending",
-                                                        tint = MaterialTheme.colorScheme.primary
+                                                        tint = MaterialTheme.colorScheme.primary,
                                                     )
                                                 } else if (notesUiState.sortOption == SortOption.UPDATED_ASC) {
                                                     Icon(
                                                         imageVector = Icons.Default.ArrowUpward,
                                                         contentDescription = "Ascending",
-                                                        tint = MaterialTheme.colorScheme.primary
+                                                        tint = MaterialTheme.colorScheme.primary,
                                                     )
                                                 }
                                             }
                                         },
                                         onClick = {
                                             viewModel.setSortOption(
-                                                if (notesUiState.sortOption == SortOption.UPDATED_DESC) 
-                                                    SortOption.UPDATED_ASC 
-                                                else 
+                                                if (notesUiState.sortOption == SortOption.UPDATED_DESC) {
+                                                    SortOption.UPDATED_ASC
+                                                } else {
                                                     SortOption.UPDATED_DESC
+                                                },
                                             )
                                             showSortMenu = false
                                         },
-                                        colors = MenuDefaults.itemColors(
-                                            textColor = if (notesUiState.sortOption == SortOption.UPDATED_DESC || 
-                                                      notesUiState.sortOption == SortOption.UPDATED_ASC)
-                                                MaterialTheme.colorScheme.primary
-                                            else
-                                                MaterialTheme.colorScheme.onSurface
-                                        )
+                                        colors =
+                                            MenuDefaults.itemColors(
+                                                textColor =
+                                                    if (notesUiState.sortOption == SortOption.UPDATED_DESC ||
+                                                        notesUiState.sortOption == SortOption.UPDATED_ASC
+                                                    ) {
+                                                        MaterialTheme.colorScheme.primary
+                                                    } else {
+                                                        MaterialTheme.colorScheme.onSurface
+                                                    },
+                                            ),
                                     )
-                                    
+
                                     DropdownMenuItem(
-                                        text = { 
+                                        text = {
                                             Row(
                                                 verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                                             ) {
                                                 Text("Creation date")
                                                 if (notesUiState.sortOption == SortOption.CREATED_DESC) {
                                                     Icon(
                                                         imageVector = Icons.Default.ArrowDownward,
                                                         contentDescription = "Descending",
-                                                        tint = MaterialTheme.colorScheme.primary
+                                                        tint = MaterialTheme.colorScheme.primary,
                                                     )
                                                 } else if (notesUiState.sortOption == SortOption.CREATED_ASC) {
                                                     Icon(
                                                         imageVector = Icons.Default.ArrowUpward,
                                                         contentDescription = "Ascending",
-                                                        tint = MaterialTheme.colorScheme.primary
+                                                        tint = MaterialTheme.colorScheme.primary,
                                                     )
                                                 }
                                             }
                                         },
                                         onClick = {
                                             viewModel.setSortOption(
-                                                if (notesUiState.sortOption == SortOption.CREATED_DESC) 
-                                                    SortOption.CREATED_ASC 
-                                                else 
+                                                if (notesUiState.sortOption == SortOption.CREATED_DESC) {
+                                                    SortOption.CREATED_ASC
+                                                } else {
                                                     SortOption.CREATED_DESC
+                                                },
                                             )
                                             showSortMenu = false
                                         },
-                                        colors = MenuDefaults.itemColors(
-                                            textColor = if (notesUiState.sortOption == SortOption.CREATED_DESC || 
-                                                      notesUiState.sortOption == SortOption.CREATED_ASC)
-                                                MaterialTheme.colorScheme.primary
-                                            else
-                                                MaterialTheme.colorScheme.onSurface
-                                        )
+                                        colors =
+                                            MenuDefaults.itemColors(
+                                                textColor =
+                                                    if (notesUiState.sortOption == SortOption.CREATED_DESC ||
+                                                        notesUiState.sortOption == SortOption.CREATED_ASC
+                                                    ) {
+                                                        MaterialTheme.colorScheme.primary
+                                                    } else {
+                                                        MaterialTheme.colorScheme.onSurface
+                                                    },
+                                            ),
                                     )
-                                    
+
                                     DropdownMenuItem(
-                                        text = { 
+                                        text = {
                                             Row(
                                                 verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                                             ) {
                                                 Text("Title")
                                                 if (notesUiState.sortOption == SortOption.TITLE_DESC) {
                                                     Icon(
                                                         imageVector = Icons.Default.ArrowDownward,
                                                         contentDescription = "Z to A",
-                                                        tint = MaterialTheme.colorScheme.primary
+                                                        tint = MaterialTheme.colorScheme.primary,
                                                     )
                                                 } else if (notesUiState.sortOption == SortOption.TITLE_ASC) {
                                                     Icon(
                                                         imageVector = Icons.Default.ArrowUpward,
                                                         contentDescription = "A to Z",
-                                                        tint = MaterialTheme.colorScheme.primary
+                                                        tint = MaterialTheme.colorScheme.primary,
                                                     )
                                                 }
                                             }
                                         },
                                         onClick = {
                                             viewModel.setSortOption(
-                                                if (notesUiState.sortOption == SortOption.TITLE_ASC) 
-                                                    SortOption.TITLE_DESC 
-                                                else 
+                                                if (notesUiState.sortOption == SortOption.TITLE_ASC) {
+                                                    SortOption.TITLE_DESC
+                                                } else {
                                                     SortOption.TITLE_ASC
+                                                },
                                             )
                                             showSortMenu = false
                                         },
-                                        colors = MenuDefaults.itemColors(
-                                            textColor = if (notesUiState.sortOption == SortOption.TITLE_DESC || 
-                                                      notesUiState.sortOption == SortOption.TITLE_ASC)
-                                                MaterialTheme.colorScheme.primary
-                                            else
-                                                MaterialTheme.colorScheme.onSurface
-                                        )
+                                        colors =
+                                            MenuDefaults.itemColors(
+                                                textColor =
+                                                    if (notesUiState.sortOption == SortOption.TITLE_DESC ||
+                                                        notesUiState.sortOption == SortOption.TITLE_ASC
+                                                    ) {
+                                                        MaterialTheme.colorScheme.primary
+                                                    } else {
+                                                        MaterialTheme.colorScheme.onSurface
+                                                    },
+                                            ),
                                     )
                                 }
                             }
-                            
+
                             IconButton(onClick = { viewModel.setSearchActive(true) }) {
                                 Icon(
                                     imageVector = Icons.Default.Search,
@@ -349,7 +366,7 @@ fun NotesScreen(
                                 IconButton(onClick = { onNavigateToNotebooks() }) {
                                     Icon(
                                         imageVector = Icons.Default.Book,
-                                        contentDescription = "Manage Notebooks"
+                                        contentDescription = "Manage Notebooks",
                                     )
                                 }
                             }
@@ -368,27 +385,28 @@ fun NotesScreen(
                             modifier = Modifier.fillMaxWidth(),
                         ) {}
                     }
-                    
+
                     // Notebook filter - only show in ALL notes view
                     if (notesUiState.viewType == NotesViewType.ALL && !notesUiState.isSearchActive) {
                         val notebooksViewModel: NotebooksViewModel = hiltViewModel()
                         val notebooksUiState by notebooksViewModel.uiState.collectAsState()
-                        
+
                         Spacer(modifier = Modifier.height(8.dp))
-                        
+
                         Text(
                             "Notebooks",
                             style = MaterialTheme.typography.titleSmall,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        
+
                         LazyRow(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(horizontal = 8.dp)
+                            contentPadding = PaddingValues(horizontal = 8.dp),
                         ) {
                             item {
                                 FilterChip(
@@ -399,12 +417,12 @@ fun NotesScreen(
                                         Icon(
                                             Icons.Default.Book,
                                             contentDescription = null,
-                                            modifier = Modifier.size(16.dp)
+                                            modifier = Modifier.size(16.dp),
                                         )
-                                    }
+                                    },
                                 )
                             }
-                            
+
                             items(notebooksUiState.notebooks) { notebook ->
                                 FilterChip(
                                     selected = notesUiState.selectedNotebookId == notebook.id,
@@ -414,9 +432,9 @@ fun NotesScreen(
                                         Icon(
                                             Icons.Default.Book,
                                             contentDescription = null,
-                                            modifier = Modifier.size(16.dp)
+                                            modifier = Modifier.size(16.dp),
                                         )
-                                    }
+                                    },
                                 )
                             }
                         }
@@ -426,7 +444,10 @@ fun NotesScreen(
             floatingActionButton = {
                 if (notesUiState.viewType != NotesViewType.TRASH) {
                     FloatingActionButton(
-                        onClick = { onNavigateToEditor(null) },
+                        onClick = {
+                            MemLogger.d("MemLog test log")
+                            onNavigateToEditor(null)
+                        },
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -494,4 +515,4 @@ fun NotesScreen(
             }
         }
     }
-} 
+}
