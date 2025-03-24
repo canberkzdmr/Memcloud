@@ -90,6 +90,10 @@ class DefaultNotesRepository @Inject constructor(
         noteDao.deleteNotePermanently(id)
     }
 
+    override suspend fun restoreNote(id: String) {
+        noteDao.restoreNote(id)
+    }
+
     override suspend fun emptyTrash() {
         noteDao.emptyTrash()
     }

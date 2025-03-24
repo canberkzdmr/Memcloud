@@ -1,6 +1,5 @@
 package com.cbo.memcloud.feature.notes.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,8 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -33,6 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.cbo.memcloud.core.model.Note
+import com.cbo.memcloud.core.ui.cards.CardSwipeType
+import com.cbo.memcloud.core.ui.cards.DefaultSwipeBackground
+import com.cbo.memcloud.core.ui.cards.SwipeableCard
 import com.cbo.memcloud.feature.notes.NotesViewType
 import java.time.Instant
 import java.time.LocalDateTime
@@ -49,58 +50,87 @@ fun NoteCard(
     onUnarchiveClick: (String) -> Unit,
     onTrashClick: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    onRestoreClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    swipeType: CardSwipeType = CardSwipeType.NONE, // Optional swipe feature, enabled by default for notes
 ) {
     var showMenu by remember { mutableStateOf(false) }
-    
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onNoteClick(note.id) },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+
+    SwipeableCard(
+        modifier = modifier.fillMaxWidth(),
+        swipeType = swipeType,
+        onSwipeLeft = {
+            if (viewType == NotesViewType.TRASH) {
+                onDeleteClick(note.id)
+            } else {
+                onTrashClick(note.id)
+            }
+        },
+        onSwipeRight = {
+            if (viewType == NotesViewType.TRASH) {
+                onRestoreClick(note.id)
+            } else if (viewType == NotesViewType.ARCHIVED) {
+                onUnarchiveClick(note.id)
+            }
+        },
+        swipeBackground = { left, right -> DefaultSwipeBackground(swipeType, left, right) },
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable { onNoteClick(note.id) }
+                    .padding(16.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = note.title.ifEmpty { "Untitled Note" },
+                    text = "${if (note.createdAt != note.updatedAt) "* " else ""}${note.title.ifEmpty { "Untitled Note" }}",
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
-                
+
+                if (viewType == NotesViewType.TRASH) {
+                    IconButton(
+                        onClick = { onRestoreClick(note.id) },
+                        modifier = Modifier.size(24.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Restore,
+                            contentDescription = "Restore note",
+                        )
+                    }
+                }
+
                 IconButton(
                     onClick = { onFavoriteClick(note.id, !note.isFavorite) },
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 ) {
                     Icon(
                         imageVector = if (note.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = if (note.isFavorite) "Remove from favorites" else "Add to favorites",
-                        tint = if (note.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        tint = if (note.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                     )
                 }
-                
+
                 Box {
                     IconButton(
                         onClick = { showMenu = true },
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More options"
+                            contentDescription = "More options",
                         )
                     }
-                    
+
                     DropdownMenu(
                         expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
+                        onDismissRequest = { showMenu = false },
                     ) {
                         when (viewType) {
                             NotesViewType.ARCHIVED -> {
@@ -109,14 +139,14 @@ fun NoteCard(
                                     onClick = {
                                         onUnarchiveClick(note.id)
                                         showMenu = false
-                                    }
+                                    },
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Delete") },
                                     onClick = {
                                         onTrashClick(note.id)
                                         showMenu = false
-                                    }
+                                    },
                                 )
                             }
                             NotesViewType.TRASH -> {
@@ -125,7 +155,7 @@ fun NoteCard(
                                     onClick = {
                                         onDeleteClick(note.id)
                                         showMenu = false
-                                    }
+                                    },
                                 )
                             }
                             else -> {
@@ -134,67 +164,67 @@ fun NoteCard(
                                     onClick = {
                                         onArchiveClick(note.id)
                                         showMenu = false
-                                    }
+                                    },
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Delete") },
                                     onClick = {
                                         onTrashClick(note.id)
                                         showMenu = false
-                                    }
+                                    },
                                 )
                             }
                         }
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             if (note.content.isNotEmpty()) {
                 Text(
                     text = note.content,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
-                
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                val lastModified = if (note.updatedAt > 0) {
-                    formatDateTime(note.updatedAt)
-                } else {
-                    "Unknown date"
-                }
-                
+                val lastModified =
+                    if (note.updatedAt > 0) {
+                        formatDateTime(note.updatedAt)
+                    } else {
+                        "Unknown date"
+                    }
+
                 Text(
                     text = lastModified,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                
+
                 Spacer(modifier = Modifier.width(8.dp))
-                
+
                 if (note.tags.isNotEmpty()) {
                     Text(
                         text = "•",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    
+
                     Spacer(modifier = Modifier.width(8.dp))
-                    
+
                     Text(
                         text = note.tags.joinToString(", "),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
@@ -208,4 +238,4 @@ private fun formatDateTime(timestamp: Long): String {
     val dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
     val formatter = DateTimeFormatter.ofPattern("MMM d, yyyy HH:mm")
     return dateTime.format(formatter)
-} 
+}

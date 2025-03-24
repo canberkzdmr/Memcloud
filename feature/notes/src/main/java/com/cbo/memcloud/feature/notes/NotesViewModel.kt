@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cbo.memcloud.core.data.repository.NotesRepository
 import com.cbo.memcloud.core.data.repository.NotebooksRepository
+import com.cbo.memcloud.core.logger.MemLogger
 import com.cbo.memcloud.core.model.Note
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -138,6 +139,13 @@ class NotesViewModel @Inject constructor(
     fun deleteNotePermanently(noteId: String) {
         viewModelScope.launch {
             notesRepository.deleteNotePermanently(noteId)
+        }
+    }
+
+    fun restoreNote(noteId: String) {
+        viewModelScope.launch {
+            MemLogger.i("restoreNote")
+            notesRepository.restoreNote(noteId)
         }
     }
 }

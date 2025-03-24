@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -88,17 +89,19 @@ fun NoteEditorScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        viewModel.saveNote()
                         onNavigateBack()
                     }) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.saveNote() }) {
+                    IconButton(onClick = {
+                        viewModel.saveNote()
+                        onNavigateBack()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Save,
                             contentDescription = "Save Note"

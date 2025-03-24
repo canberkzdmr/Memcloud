@@ -1,6 +1,5 @@
 package com.cbo.memcloud.feature.notes
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,6 +65,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cbo.memcloud.core.logger.MemLogger
+import com.cbo.memcloud.core.ui.cards.CardSwipeType
 import com.cbo.memcloud.feature.notes.SortOption
 import com.cbo.memcloud.feature.notes.components.NoteCard
 import kotlinx.coroutines.launch
@@ -445,7 +445,7 @@ fun NotesScreen(
                 if (notesUiState.viewType != NotesViewType.TRASH) {
                     FloatingActionButton(
                         onClick = {
-                            MemLogger.d("MemLog test log")
+                            MemLogger.i("Add Note onClick")
                             onNavigateToEditor(null)
                         },
                     ) {
@@ -508,7 +508,22 @@ fun NotesScreen(
                             onArchiveClick = { viewModel.archiveNote(it) },
                             onUnarchiveClick = { viewModel.unarchiveNote(it) },
                             onTrashClick = { viewModel.moveNoteToTrash(it) },
-                            onDeleteClick = { viewModel.deleteNotePermanently(it) },
+                            onDeleteClick = {
+                                viewModel.deleteNotePermanently(it)
+                                MemLogger.i("note size: ${notes.size}")
+                                if (notes.size in 1..1) {
+                                    viewModel.setViewType(NotesViewType.ALL)
+                                }
+                                            },
+                            onRestoreClick = {
+                                MemLogger.i("NoteCard onRestoreClick")
+                                viewModel.restoreNote(it)
+                            },
+                            swipeType = when (notesUiState.viewType) {
+                                NotesViewType.ALL -> CardSwipeType.LEFT
+                                NotesViewType.FAVORITES, NotesViewType.ARCHIVED -> CardSwipeType.NONE
+                                NotesViewType.TRASH -> CardSwipeType.BOTH
+                            }
                         )
                     }
                 }
